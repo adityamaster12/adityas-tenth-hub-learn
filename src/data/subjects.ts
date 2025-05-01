@@ -1,4 +1,3 @@
-
 // Sample subjects and chapters data for educational website
 // IMPORTANT: Replace dummy video links with actual YouTube embed URLs
 // IMPORTANT: Replace dummy notes links with actual Google Drive or other document links
@@ -34,7 +33,7 @@ export interface Subject {
 }
 
 // Helper function to create dummy lectures
-const createLectures = (chapterPrefix: string, count: number = 5): Lecture[] => {
+const createLectures = (chapterPrefix: string, count: number = 7): Lecture[] => {
   return Array.from({ length: count }, (_, i) => ({
     id: `${chapterPrefix}-lecture-${i + 1}`,
     title: `Lecture ${i + 1}: ${generateLectureTitle(i + 1)}`,
@@ -44,9 +43,11 @@ const createLectures = (chapterPrefix: string, count: number = 5): Lecture[] => 
     date: generateRandomDate(),
     duration: generateRandomDuration(),
     // IMPORTANT: Replace with actual YouTube embed URLs
+    // Format: https://www.youtube.com/embed/YOUR_VIDEO_ID
     videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     // IMPORTANT: Replace with actual Google Drive URLs
-    notesUrl: "https://drive.google.com/file/d/sample-file-id/view",
+    // Format: https://drive.google.com/file/d/YOUR_FILE_ID/view
+    notesUrl: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/view",
   }));
 };
 
@@ -290,4 +291,24 @@ export function getSubjectById(subjectId: string): Subject | undefined {
 
 export function getChapterById(subject: Subject, chapterId: string): Chapter | undefined {
   return subject.chapters.find(chapter => chapter.id === chapterId);
+}
+
+// Helper function for generating DPP links
+export function getDppLinks(chapterId: string, count: number = 5): { title: string, url: string }[] {
+  return Array.from({ length: count }, (_, i) => ({
+    title: `DPP Set ${i + 1}`,
+    // IMPORTANT: Replace with actual Google Drive URLs 
+    // Format: https://drive.google.com/file/d/YOUR_FILE_ID/view
+    url: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/view"
+  }));
+}
+
+// Helper function for generating DPP solution links
+export function getDppSolutionLinks(chapterId: string, count: number = 5): { title: string, url: string }[] {
+  return Array.from({ length: count }, (_, i) => ({
+    title: `Solutions - DPP Set ${i + 1}`,
+    // IMPORTANT: Replace with actual Google Drive URLs
+    // Format: https://drive.google.com/file/d/YOUR_FILE_ID/view
+    url: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/view"
+  }));
 }

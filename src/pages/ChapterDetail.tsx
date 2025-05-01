@@ -5,7 +5,7 @@ import { Home, Clock, Calendar } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getSubjectById, getChapterById } from '@/data/subjects';
+import { getSubjectById, getChapterById, getDppLinks, getDppSolutionLinks } from '@/data/subjects';
 
 const ChapterDetail = () => {
   const { subjectId, chapterId } = useParams<{ subjectId: string, chapterId: string }>();
@@ -33,6 +33,9 @@ const ChapterDetail = () => {
       </div>
     );
   }
+
+  const dppLinks = getDppLinks(chapter.id);
+  const dppSolutionLinks = getDppSolutionLinks(chapter.id);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -91,31 +94,33 @@ const ChapterDetail = () => {
                     {/* Lecture List */}
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">Lecture Videos</h3>
-                      {chapter.lectures.map((lecture) => (
-                        <div 
-                          key={lecture.id}
-                          className={`lecture-card cursor-pointer ${selectedLecture?.id === lecture.id ? 'border-2 border-education-primary' : ''}`}
-                          onClick={() => setSelectedLecture(lecture)}
-                        >
-                          <div className="relative">
-                            <img 
-                              src={lecture.thumbnail} 
-                              alt={lecture.title} 
-                              className="object-cover w-full h-32 rounded"
-                            />
-                            <div className="absolute bottom-0 right-0 px-2 py-1 text-xs text-white bg-black bg-opacity-70 rounded-tl">
-                              {lecture.duration}
+                      <div className="max-h-[600px] overflow-y-auto pr-2">
+                        {chapter.lectures.map((lecture) => (
+                          <div 
+                            key={lecture.id}
+                            className={`lecture-card cursor-pointer mb-4 p-2 rounded ${selectedLecture?.id === lecture.id ? 'border-2 border-education-primary' : 'border border-gray-200'}`}
+                            onClick={() => setSelectedLecture(lecture)}
+                          >
+                            <div className="relative">
+                              <img 
+                                src={lecture.thumbnail} 
+                                alt={lecture.title} 
+                                className="object-cover w-full h-32 rounded"
+                              />
+                              <div className="absolute bottom-0 right-0 px-2 py-1 text-xs text-white bg-black bg-opacity-70 rounded-tl">
+                                {lecture.duration}
+                              </div>
+                            </div>
+                            <h4 className="mt-2 font-medium">{lecture.title}</h4>
+                            <div className="flex items-center mt-2 text-sm text-gray-500">
+                              <Calendar className="w-4 h-4 mr-1" />
+                              <span>{lecture.date}</span>
+                              <Clock className="w-4 h-4 ml-3 mr-1" />
+                              <span>{lecture.duration}</span>
                             </div>
                           </div>
-                          <h4 className="mt-2 font-medium">{lecture.title}</h4>
-                          <div className="flex items-center mt-2 text-sm text-gray-500">
-                            <Calendar className="w-4 h-4 mr-1" />
-                            <span>{lecture.date}</span>
-                            <Clock className="w-4 h-4 ml-3 mr-1" />
-                            <span>{lecture.duration}</span>
-                          </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
 
                     {/* Video Player */}
@@ -166,48 +171,31 @@ const ChapterDetail = () => {
                       Comprehensive notes for this chapter are available for download.
                     </p>
                     <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2">
-                      <a 
-                        href="#" 
-                        className="flex items-center p-4 border rounded-lg hover:bg-gray-50"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <div className="p-2 mr-4 rounded-full bg-education-light">📝</div>
-                        <div>
-                          <h4 className="font-medium">Complete Chapter Notes</h4>
-                          <p className="text-sm text-gray-500">PDF Format</p>
-                        </div>
-                      </a>
-                      <a 
-                        href="#" 
-                        className="flex items-center p-4 border rounded-lg hover:bg-gray-50"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <div className="p-2 mr-4 rounded-full bg-education-light">📊</div>
-                        <div>
-                          <h4 className="font-medium">Formula Sheet</h4>
-                          <p className="text-sm text-gray-500">Quick Reference</p>
-                        </div>
-                      </a>
+                      {chapter.lectures.map((lecture, index) => (
+                        <a 
+                          key={index}
+                          href={lecture.notesUrl} 
+                          className="flex items-center p-4 border rounded-lg hover:bg-gray-50"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <div className="p-2 mr-4 rounded-full bg-education-light">📝</div>
+                          <div>
+                            <h4 className="font-medium">Notes: {lecture.title}</h4>
+                            <p className="text-sm text-gray-500">PDF Format</p>
+                          </div>
+                        </a>
+                      ))}
                     </div>
                   </div>
                 </TabsContent>
 
                 <TabsContent value="dpp-quiz" className="pt-6">
-                  <div className="p-6 border rounded-lg">
-                    <h3 className="text-lg font-semibold">Daily Practice Problems - Quiz</h3>
-                    <p className="mt-2 text-gray-600">
-                      Test your understanding with interactive quizzes based on daily practice problems.
+                  <div className="p-12 border rounded-lg text-center">
+                    <h3 className="text-3xl font-bold text-gray-400 mb-4">COMING SOON</h3>
+                    <p className="text-xl text-gray-500">
+                      Interactive quizzes for daily practice problems will be available soon.
                     </p>
-                    <div className="mt-4">
-                      <a 
-                        href="#" 
-                        className="inline-flex items-center px-4 py-2 text-sm font-medium text-white rounded bg-education-primary hover:bg-education-primary/90"
-                      >
-                        Start Quiz
-                      </a>
-                    </div>
                   </div>
                 </TabsContent>
 
@@ -218,30 +206,21 @@ const ChapterDetail = () => {
                       Download daily practice problems to solve offline.
                     </p>
                     <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2">
-                      <a 
-                        href="#" 
-                        className="flex items-center p-4 border rounded-lg hover:bg-gray-50"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <div className="p-2 mr-4 rounded-full bg-education-light">📝</div>
-                        <div>
-                          <h4 className="font-medium">DPP Set 1</h4>
-                          <p className="text-sm text-gray-500">Basic Concepts</p>
-                        </div>
-                      </a>
-                      <a 
-                        href="#" 
-                        className="flex items-center p-4 border rounded-lg hover:bg-gray-50"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <div className="p-2 mr-4 rounded-full bg-education-light">📝</div>
-                        <div>
-                          <h4 className="font-medium">DPP Set 2</h4>
-                          <p className="text-sm text-gray-500">Advanced Problems</p>
-                        </div>
-                      </a>
+                      {dppLinks.map((dpp, index) => (
+                        <a 
+                          key={index}
+                          href={dpp.url} 
+                          className="flex items-center p-4 border rounded-lg hover:bg-gray-50"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <div className="p-2 mr-4 rounded-full bg-education-light">📝</div>
+                          <div>
+                            <h4 className="font-medium">{dpp.title}</h4>
+                            <p className="text-sm text-gray-500">Daily Practice Problems</p>
+                          </div>
+                        </a>
+                      ))}
                     </div>
                   </div>
                 </TabsContent>
@@ -253,30 +232,21 @@ const ChapterDetail = () => {
                       Check your answers with detailed solution guides.
                     </p>
                     <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2">
-                      <a 
-                        href="#" 
-                        className="flex items-center p-4 border rounded-lg hover:bg-gray-50"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <div className="p-2 mr-4 rounded-full bg-education-light">✓</div>
-                        <div>
-                          <h4 className="font-medium">Solutions - DPP Set 1</h4>
-                          <p className="text-sm text-gray-500">With Step-by-Step Explanations</p>
-                        </div>
-                      </a>
-                      <a 
-                        href="#" 
-                        className="flex items-center p-4 border rounded-lg hover:bg-gray-50"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <div className="p-2 mr-4 rounded-full bg-education-light">✓</div>
-                        <div>
-                          <h4 className="font-medium">Solutions - DPP Set 2</h4>
-                          <p className="text-sm text-gray-500">With Step-by-Step Explanations</p>
-                        </div>
-                      </a>
+                      {dppSolutionLinks.map((solution, index) => (
+                        <a 
+                          key={index}
+                          href={solution.url} 
+                          className="flex items-center p-4 border rounded-lg hover:bg-gray-50"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <div className="p-2 mr-4 rounded-full bg-education-light">✓</div>
+                          <div>
+                            <h4 className="font-medium">{solution.title}</h4>
+                            <p className="text-sm text-gray-500">With Step-by-Step Explanations</p>
+                          </div>
+                        </a>
+                      ))}
                     </div>
                   </div>
                 </TabsContent>
