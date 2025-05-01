@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,21 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Educational Theme Colors
+				education: {
+					primary: '#4F46E5', // Main brand color
+					secondary: '#8B5CF6', // Secondary brand color
+					accent: '#C4B5FD', // Accent color
+					light: '#EEF2FF', // Light background
+					dark: '#1E293B', // Dark text color
+					physics: '#9333EA', // Subject colors
+					chemistry: '#16A34A',
+					biology: '#0891B2',
+					mathematics: '#E11D48',
+					sst: '#F97316',
+					english: '#0EA5E9',
+					hindi: '#8B5CF6',
 				}
 			},
 			borderRadius: {
@@ -84,11 +100,33 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'scale-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'scale(0.95)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'scale(1)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'scale-in': 'scale-in 0.2s ease-out'
 			}
 		}
 	},
