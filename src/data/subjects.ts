@@ -1,6 +1,6 @@
 // Sample subjects and chapters data for educational website
-// IMPORTANT: Replace dummy video links with actual YouTube embed URLs
-// IMPORTANT: Replace dummy notes links with actual Google Drive or other document links
+// IMPORTANT: Replace dummy video links with actual Google Drive embed URLs
+// IMPORTANT: Replace dummy notes links with actual Google Drive document links
 
 // Types
 export interface Lecture {
@@ -10,7 +10,7 @@ export interface Lecture {
   thumbnail: string;
   date: string;
   duration: string;
-  videoUrl: string; // YouTube embed URL (replace with actual URLs)
+  videoUrl: string; // Google Drive embed URL (replace with actual URLs)
   notesUrl: string; // Google Drive link (replace with actual URLs)
 }
 
@@ -42,9 +42,9 @@ const createLectures = (chapterPrefix: string, count: number = 7): Lecture[] => 
     thumbnail: `https://picsum.photos/seed/${chapterPrefix}-${i + 1}/400/225`,
     date: generateRandomDate(),
     duration: generateRandomDuration(),
-    // IMPORTANT: Replace with actual YouTube embed URLs
-    // Format: https://www.youtube.com/embed/YOUR_VIDEO_ID
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    // IMPORTANT: Replace with actual Google Drive embed URLs
+    // Format: https://drive.google.com/file/d/YOUR_FILE_ID/preview
+    videoUrl: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/preview",
     // IMPORTANT: Replace with actual Google Drive URLs
     // Format: https://drive.google.com/file/d/YOUR_FILE_ID/view
     notesUrl: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/view",
@@ -100,104 +100,107 @@ function generateRandomDuration(): string {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-// Helper function to generate chapter titles based on subject
+// Helper function to generate actual CBSE class 10th chapter titles based on subject
 function generateChapterTitle(subjectId: string, chapterNumber: number): string {
   const chapterTitles: { [key: string]: string[] } = {
     "physics": [
-      "Physical World and Measurement",
-      "Kinematics",
-      "Laws of Motion",
-      "Work, Energy and Power",
-      "Motion of System of Particles",
-      "Gravitation",
-      "Properties of Bulk Matter",
-      "Thermodynamics",
-      "Behaviour of Perfect Gas",
-      "Oscillations and Waves"
+      "Electric Current and Circuit",
+      "Magnetic Effects of Electric Current",
+      "Sources of Energy",
+      "Light - Reflection and Refraction",
+      "The Human Eye and the Colorful World",
     ],
     "chemistry": [
-      "Chemical Substances",
-      "Structure of Atom",
-      "Classification of Elements",
-      "Chemical Bonding",
-      "States of Matter",
-      "Thermodynamics",
-      "Equilibrium",
-      "Redox Reactions",
-      "Hydrogen and s-Block Elements",
-      "Organic Chemistry"
+      "Chemical Reactions and Equations",
+      "Acids, Bases and Salts",
+      "Metals and Non-metals",
+      "Carbon and its Compounds",
+      "Periodic Classification of Elements",
     ],
     "biology": [
       "Life Processes",
       "Control and Coordination",
-      "Reproduction in Organisms",
+      "How do Organisms Reproduce?",
       "Heredity and Evolution",
-      "Human Physiology",
-      "Plants Physiology",
-      "Ecology and Environment",
-      "Diversity in Living Organisms",
-      "Natural Resources",
-      "Our Environment"
+      "Our Environment",
     ],
     "mathematics": [
       "Real Numbers",
       "Polynomials",
-      "Pair of Linear Equations",
+      "Pair of Linear Equations in Two Variables",
       "Quadratic Equations",
       "Arithmetic Progressions",
       "Triangles",
       "Coordinate Geometry",
       "Introduction to Trigonometry",
       "Circles",
-      "Statistics and Probability"
+      "Areas Related to Circles",
+      "Surface Areas and Volumes",
+      "Statistics",
+      "Probability",
     ],
     "sst": [
-      "India and Contemporary World",
-      "Contemporary India",
-      "Democratic Politics",
+      "The Rise of Nationalism in Europe",
+      "Nationalism in India",
+      "The Making of a Global World",
+      "The Age of Industrialization",
+      "Print Culture and the Modern World",
       "Resources and Development",
+      "Forest and Wildlife Resources",
+      "Water Resources",
       "Agriculture",
+      "Minerals and Energy Resources",
       "Manufacturing Industries",
+      "Lifelines of National Economy",
+      "Power Sharing",
+      "Federalism",
+      "Democracy and Diversity",
+      "Gender, Religion and Caste",
       "Popular Struggles and Movements",
+      "Political Parties",
+      "Outcomes of Democracy",
       "Challenges to Democracy",
+      "Development",
+      "Sectors of the Indian Economy",
       "Money and Credit",
-      "Globalization"
+      "Globalisation and the Indian Economy",
+      "Consumer Rights",
     ],
     "english": [
-      "Prose - First Flight",
-      "Poetry - First Flight",
-      "Supplementary Reader - Footprints",
-      "Grammar and Vocabulary",
-      "Reading Comprehension",
-      "Letter Writing",
-      "Article Writing",
-      "Story Writing",
-      "Editing and Omission",
-      "Literature - Novel Study"
+      "A Letter to God",
+      "Nelson Mandela: Long Walk to Freedom",
+      "Two Stories About Flying",
+      "From the Diary of Anne Frank",
+      "The Hundred Dresses I & II",
+      "Glimpses of India",
+      "Mijbil the Otter",
+      "Madam Rides the Bus",
+      "The Sermon at Benares",
+      "The Proposal",
     ],
     "hindi-a": [
-      "गद्य खंड",
-      "काव्य खंड",
-      "कृतिका (पूरक पाठ्य पुस्तक)",
-      "व्याकरण",
-      "निबंध लेखन",
-      "पत्र लेखन",
-      "विज्ञापन लेखन",
-      "औपचारिक पत्र",
-      "अपठित गद्यांश",
-      "अपठित काव्यांश"
+      "सूरदास के पद",
+      "राम-लक्ष्मण-परशुराम संवाद",
+      "देव",
+      "जयशंकर प्रसाद",
+      "सूरदास",
+      "नेताजी का चश्मा",
+      "बालगोबिन भगत",
+      "लखनवी अंदाज",
+      "मानवीय करुणा की दिव्य चमक",
+      "एक कहानी यह भी",
     ],
     "hindi-b": [
-      "स्पर्श भाग-2",
-      "संचयन भाग-2",
-      "व्याकरण",
-      "रचनात्मक लेखन",
-      "पत्र लेखन",
-      "विज्ञापन लेखन",
-      "संवाद लेखन",
-      "सूचना लेखन",
-      "अनुच्छेद लेखन",
-      "अपठित गद्यांश और काव्यांश"
+      "बड़े भाई साहब",
+      "डायरी का एक पन्ना",
+      "तताँरा वामीरो कथा",
+      "तीसरी कसम के शिल्पकार शैलेंद्र",
+      "गिरगिट",
+      "अब कहां दूसरे के दुख से दुखी होने वाले",
+      "पतझर में टूटी पत्तियां",
+      "कारतूस",
+      "हरिहर काका",
+      "सपनों के-से दिन",
     ]
   };
   
@@ -217,7 +220,7 @@ export const subjects: Subject[] = [
     color: "bg-education-physics",
     colorLight: "bg-purple-50",
     icon: "⚛️",
-    chapters: createChapters("physics")
+    chapters: createChapters("physics", 5)
   },
   {
     id: "chemistry",
@@ -226,7 +229,7 @@ export const subjects: Subject[] = [
     color: "bg-education-chemistry",
     colorLight: "bg-green-50",
     icon: "🧪",
-    chapters: createChapters("chemistry")
+    chapters: createChapters("chemistry", 5)
   },
   {
     id: "biology",
@@ -235,7 +238,7 @@ export const subjects: Subject[] = [
     color: "bg-education-biology",
     colorLight: "bg-cyan-50",
     icon: "🧬",
-    chapters: createChapters("biology")
+    chapters: createChapters("biology", 5)
   },
   {
     id: "mathematics",
@@ -244,7 +247,7 @@ export const subjects: Subject[] = [
     color: "bg-education-mathematics",
     colorLight: "bg-red-50",
     icon: "➗",
-    chapters: createChapters("mathematics")
+    chapters: createChapters("mathematics", 13)
   },
   {
     id: "sst",
@@ -253,7 +256,7 @@ export const subjects: Subject[] = [
     color: "bg-education-sst",
     colorLight: "bg-orange-50",
     icon: "🌍",
-    chapters: createChapters("sst")
+    chapters: createChapters("sst", 25)
   },
   {
     id: "english",
@@ -262,7 +265,7 @@ export const subjects: Subject[] = [
     color: "bg-education-english",
     colorLight: "bg-blue-50",
     icon: "📚",
-    chapters: createChapters("english")
+    chapters: createChapters("english", 10)
   },
   {
     id: "hindi-a",
@@ -271,7 +274,7 @@ export const subjects: Subject[] = [
     color: "bg-education-hindi",
     colorLight: "bg-purple-50",
     icon: "🗣️",
-    chapters: createChapters("hindi-a")
+    chapters: createChapters("hindi-a", 10)
   },
   {
     id: "hindi-b",
@@ -280,7 +283,7 @@ export const subjects: Subject[] = [
     color: "bg-education-hindi",
     colorLight: "bg-purple-50",
     icon: "📝",
-    chapters: createChapters("hindi-b")
+    chapters: createChapters("hindi-b", 10)
   }
 ];
 
