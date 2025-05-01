@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Clock, Home, Notes, Plus } from 'lucide-react';
+import { BookOpen, Clock, Home, FileText, Plus } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
@@ -18,7 +18,7 @@ const courseFeatures = [
     description: "Access new practice problems daily to strengthen your understanding and test your knowledge."
   },
   {
-    icon: <Notes className="w-6 h-6" />,
+    icon: <FileText className="w-6 h-6" />,
     title: "Comprehensive PDF Notes & Tests",
     description: "Download detailed study materials and practice tests for effective exam preparation."
   },
