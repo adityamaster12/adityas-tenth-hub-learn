@@ -29,6 +29,71 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isControlsVisible, setIsControlsVisible] = useState(true);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [vimeoPlayer, setVimeoPlayer] = useState<any>(null);
+
+  // Load Vimeo Player API
+  useEffect(() => {
+    // Create a script element
+    const script = document.createElement('script');
+    script.src = 'https://player.vimeo.com/api/player.js';
+    script.async = true;
+    
+    // Append the script to the document
+    document.body.appendChild(script);
+    
+    // Clean up
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  // Initialize Vimeo player
+  useEffect(() => {
+    if (videoRef.current && window.Vimeo) {
+      try {
+        // Extract Vimeo video ID from URL
+        const vimeoId = extractVimeoId(videoUrl);
+        
+        if (vimeoId) {
+          const player = new window.Vimeo.Player(videoRef.current, {
+            id: vimeoId,
+            responsive: true,
+            autoplay: false,
+            title: false,
+            byline: false,
+            portrait: false,
+            controls: false // We'll use our custom controls
+          });
+
+          // Set up event listeners
+          player.on('play', () => setIsPlaying(true));
+          player.on('pause', () => setIsPlaying(false));
+          player.on('timeupdate', (data: any) => setCurrentTime(data.seconds));
+          player.on('loadedmetadata', () => {
+            player.getDuration().then((duration: number) => {
+              setDuration(duration);
+            });
+          });
+          player.on('loaded', () => {
+            player.getDuration().then((duration: number) => {
+              setDuration(duration);
+            });
+          });
+
+          setVimeoPlayer(player);
+        }
+      } catch (error) {
+        console.error('Error initializing Vimeo player:', error);
+      }
+    }
+  }, [videoUrl]);
+
+  // Extract Vimeo ID from URL
+  const extractVimeoId = (url: string): string | null => {
+    const regex = /vimeo\.com\/([0-9]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  };
 
   // Hide controls after inactivity
   useEffect(() => {
@@ -64,28 +129,34 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
     }
   }, [isPlaying]);
 
-  // For iframe embedded videos, direct control is limited
-  // These functions would work better with HTML5 video elements
-  // Here we're providing a UI that simulates video controls
-  
   const togglePlay = () => {
-    setIsPlaying(!isPlaying);
-    // In a real implementation with HTML5 video:
-    // isPlaying ? videoRef.current?.pause() : videoRef.current?.play();
+    if (vimeoPlayer) {
+      if (isPlaying) {
+        vimeoPlayer.pause();
+      } else {
+        vimeoPlayer.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
   };
 
   const handleVolumeChange = (value: number[]) => {
     setVolume(value[0]);
     setIsMuted(value[0] === 0);
-    // In a real implementation: videoRef.current.volume = value[0] / 100;
+    if (vimeoPlayer) {
+      vimeoPlayer.setVolume(value[0] / 100);
+    }
   };
 
   const toggleMute = () => {
-    setIsMuted(!isMuted);
-    if (isMuted) {
-      setVolume(70);  // restore previous volume
-    } else {
-      setVolume(0);
+    if (vimeoPlayer) {
+      if (isMuted) {
+        vimeoPlayer.setVolume(volume / 100);
+        setIsMuted(false);
+      } else {
+        vimeoPlayer.setVolume(0);
+        setIsMuted(true);
+      }
     }
   };
 
@@ -105,19 +176,25 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
   const seek = (value: number[]) => {
     const newTime = value[0];
     setCurrentTime(newTime);
-    // In a real implementation: videoRef.current.currentTime = newTime;
+    if (vimeoPlayer) {
+      vimeoPlayer.setCurrentTime(newTime);
+    }
   };
 
   const jumpBack = () => {
-    const newTime = Math.max(0, currentTime - 10);
-    setCurrentTime(newTime);
-    // In a real implementation: videoRef.current.currentTime = newTime;
+    if (vimeoPlayer) {
+      const newTime = Math.max(0, currentTime - 10);
+      vimeoPlayer.setCurrentTime(newTime);
+      setCurrentTime(newTime);
+    }
   };
 
   const jumpForward = () => {
-    const newTime = Math.min(duration, currentTime + 10);
-    setCurrentTime(newTime);
-    // In a real implementation: videoRef.current.currentTime = newTime;
+    if (vimeoPlayer) {
+      const newTime = Math.min(duration, currentTime + 10);
+      vimeoPlayer.setCurrentTime(newTime);
+      setCurrentTime(newTime);
+    }
   };
 
   const formatTime = (timeInSeconds: number): string => {
@@ -125,30 +202,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
     const seconds = Math.floor(timeInSeconds % 60);
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
-
-  // Since we're using iframe embeds, we simulate a duration
-  useEffect(() => {
-    // Simulate video duration (5 minutes)
-    setDuration(300);
-    
-    // Simulate time updates when playing
-    let interval: NodeJS.Timeout;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setCurrentTime(prev => {
-          if (prev >= duration) {
-            setIsPlaying(false);
-            return duration;
-          }
-          return prev + 1;
-        });
-      }, 1000);
-    }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isPlaying, duration]);
 
   // Handle fullscreen change events from browser
   useEffect(() => {
@@ -171,15 +224,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
         isFullscreen ? "fixed inset-0 z-50" : "aspect-video"
       )}
     >
-      {/* Video iframe */}
-      <iframe
-        ref={videoRef}
-        src={videoUrl}
-        title={title}
-        className="absolute top-0 left-0 w-full h-full"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      ></iframe>
+      {/* Video iframe with ref but no src - Vimeo API will initialize it */}
+      <div className="vimeo-container w-full h-full">
+        <div ref={videoRef} className="absolute top-0 left-0 w-full h-full"></div>
+      </div>
       
       {/* Controls overlay */}
       <div 
@@ -273,5 +321,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
     </div>
   );
 };
+
+// Add the Vimeo Player type to the window object
+declare global {
+  interface Window {
+    Vimeo: {
+      Player: new (element: HTMLElement | string, options: any) => any;
+    };
+  }
+}
 
 export default VideoPlayer;

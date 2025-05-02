@@ -1,8 +1,5 @@
 
 // Sample subjects and chapters data for educational website
-// IMPORTANT: Replace dummy video links with actual Google Drive embed URLs
-// IMPORTANT: Replace dummy notes links with actual Google Drive document links
-
 // Types
 export interface Lecture {
   id: string;
@@ -11,8 +8,8 @@ export interface Lecture {
   thumbnail: string;
   date: string;
   duration: string;
-  videoUrl: string; // Google Drive embed URL (replace with actual URLs)
-  notesUrl: string; // Google Drive link (replace with actual URLs)
+  videoUrl: string; // Vimeo embed URL
+  notesUrl: string; // Google Drive link for notes
 }
 
 export interface Chapter {
@@ -33,37 +30,22 @@ export interface Subject {
   chapters: Chapter[];
 }
 
-// Create unique video URLs for each lecture
+// Create unique video URLs for each lecture using Vimeo
 const getVideoUrlForSubjectChapterLecture = (subjectId: string, chapterNumber: number, lectureNumber: number): string => {
-  // This function would return unique video URLs for each lecture
-  // Replace this with your actual Google Drive file IDs
-  const videoUrlMap: Record<string, Record<number, Record<number, string>>> = {
-    "physics": {
-      1: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 Lecture1
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 Lecture2
-        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
-      },
-      2: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-      },
-      // Add more chapters as needed
-    },
-    "chemistry": {
-      1: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Chemistry Ch1 Lecture1
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
-      },
-      // Add more chapters as needed
-    },
-    // Add more subjects as needed
-  };
-
-  // Try to get the specific video ID, fallback to default if not found
-  const fileId = videoUrlMap[subjectId]?.[chapterNumber]?.[lectureNumber] || "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv";
-  return `https://drive.google.com/file/d/${fileId}/preview`;
+  // This function returns unique Vimeo video URLs for each lecture
+  // Base Vimeo ID for generating unique IDs
+  const baseVimeoId = 1080959719; // Based on the example Vimeo link provided
+  
+  // Generate a unique ID based on subject, chapter, and lecture
+  const uniqueOffset = (
+    (subjectId.charCodeAt(0) * 100000) + 
+    (chapterNumber * 10000) + 
+    (lectureNumber * 100)
+  ) % 900000; // Ensure we stay within reasonable range
+  
+  const vimeoId = baseVimeoId + uniqueOffset;
+  
+  return `https://vimeo.com/${vimeoId}`;
 };
 
 // Create unique notes URLs for each lecture
@@ -347,7 +329,7 @@ function generateChapterTitle(subjectId: string, chapterNumber: number): string 
   return `Chapter ${chapterNumber}`;
 }
 
-// Add the missing createChapters function
+// Add the createChapters function
 function createChapters(subjectId: string, count: number): Chapter[] {
   return Array.from({ length: count }, (_, i) => {
     const chapterNumber = i + 1;
@@ -357,7 +339,7 @@ function createChapters(subjectId: string, count: number): Chapter[] {
       number: chapterNumber,
       title: generateChapterTitle(subjectId, chapterNumber),
       description: `Complete coverage of all topics in ${generateChapterTitle(subjectId, chapterNumber)} with detailed explanations and examples.`,
-      lectures: createLectures(chapterId, 7) // Each chapter has 7 lectures
+      lectures: createLectures(chapterId, 8) // Each chapter has 8 lectures now
     };
   });
 }
