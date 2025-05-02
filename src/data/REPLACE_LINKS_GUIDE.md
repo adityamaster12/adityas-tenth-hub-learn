@@ -1,26 +1,38 @@
+
 # Guide for Replacing Dummy Links with Your Own Content
 
 This guide will help you replace all dummy links in the educational website with your actual content links.
 
 ## Where to Replace Links
 
-All links are defined in the `src/data/subjects.ts` file. There are three types of links to replace:
+All links are defined in the `src/data/subjects.ts` file. The structure has been updated to provide individualized links for:
+- Each lecture in each chapter of each subject
+- Daily practice problems (DPPs) for each chapter of each subject
+- Solutions for DPPs for each chapter of each subject
 
-1. **Video Links**: Google Drive embed URLs for lecture videos
-2. **Notes Links**: Google Drive links for downloadable PDF notes
-3. **DPP Links**: Google Drive links for daily practice problems and solutions
+## How to Replace Video Links
 
-## How to Replace Video Links (Google Drive)
-
-1. In `src/data/subjects.ts`, find the `createLectures` function
-2. Replace the dummy `videoUrl` with your actual Google Drive embed URL:
+1. In `src/data/subjects.ts`, locate the `getVideoUrlForSubjectChapterLecture` function
+2. Replace the dummy file IDs with your actual Google Drive file IDs:
 
 ```javascript
-// FROM:
-videoUrl: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/preview",
-
-// TO:
-videoUrl: "https://drive.google.com/file/d/YOUR_GOOGLE_DRIVE_FILE_ID/preview",
+const videoUrlMap: Record<string, Record<number, Record<number, string>>> = {
+  "physics": {
+    1: {
+      1: "YOUR_FILE_ID_FOR_PHYSICS_CH1_LECTURE1",
+      2: "YOUR_FILE_ID_FOR_PHYSICS_CH1_LECTURE2",
+      // Add more lectures as needed
+    },
+    2: {
+      1: "YOUR_FILE_ID_FOR_PHYSICS_CH2_LECTURE1",
+      // Add more lectures as needed
+    },
+  },
+  "chemistry": {
+    // Similar structure for chemistry
+  },
+  // Add more subjects as needed
+};
 ```
 
 **Note**: To correctly embed a Google Drive video:
@@ -28,91 +40,71 @@ videoUrl: "https://drive.google.com/file/d/YOUR_GOOGLE_DRIVE_FILE_ID/preview",
 2. Right-click on the file and select "Get link" or "Share"
 3. Make sure the link is set to "Anyone with the link can view"
 4. Copy the file ID from the link (it's the long string between `/d/` and `/view`)
-5. Use this format: `https://drive.google.com/file/d/YOUR_FILE_ID/preview`
+5. Replace the dummy IDs in the code with your actual file IDs
 
 ## How to Replace Notes Links
 
-1. In `src/data/subjects.ts`, find the `createLectures` function
-2. Replace the dummy `notesUrl` with your actual Google Drive link:
+Similarly, in the `getNotesUrlForSubjectChapterLecture` function, replace the dummy file IDs:
 
 ```javascript
-// FROM:
-notesUrl: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/view",
-
-// TO:
-notesUrl: "https://drive.google.com/file/d/YOUR_GOOGLE_DRIVE_FILE_ID/view",
+const notesUrlMap: Record<string, Record<number, Record<number, string>>> = {
+  "physics": {
+    1: {
+      1: "YOUR_FILE_ID_FOR_PHYSICS_CH1_LECTURE1_NOTES",
+      2: "YOUR_FILE_ID_FOR_PHYSICS_CH1_LECTURE2_NOTES",
+      // Add more as needed
+    },
+    // Add more chapters as needed
+  },
+  // Add more subjects as needed
+};
 ```
 
 ## How to Replace DPP Links
 
-1. In `src/data/subjects.ts`, find the `getDppLinks` and `getDppSolutionLinks` functions
-2. Replace the dummy URLs with your actual Google Drive links:
+For DPP links, update the `getDppLinksForSubjectChapter` function:
 
 ```javascript
-// FROM:
-url: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/view"
-
-// TO:
-url: "https://drive.google.com/file/d/YOUR_GOOGLE_DRIVE_FILE_ID/view"
-```
-
-## Advanced: Adding Different Links for Each Subject/Chapter
-
-If you want to have different links for different subjects or chapters, you can modify the functions in `subjects.ts` to use the subject or chapter ID to determine which link to return.
-
-Example modification:
-```javascript
-const createLectures = (chapterPrefix: string, count: number = 7): Lecture[] => {
-  // Extract subject ID from chapterPrefix (e.g., "physics-chapter-1" -> "physics")
-  const subjectId = chapterPrefix.split('-')[0];
-  // Extract chapter number from chapterPrefix (e.g., "physics-chapter-1" -> 1)
-  const chapterNumber = parseInt(chapterPrefix.split('-')[2]);
-  
-  return Array.from({ length: count }, (_, i) => ({
-    // ... other properties
-    
-    // Use different video URLs based on subject and chapter
-    videoUrl: getVideoUrlForSubjectAndChapter(subjectId, chapterNumber, i + 1),
-    
-    // Use different notes URLs based on subject and chapter
-    notesUrl: getNotesUrlForSubjectAndChapter(subjectId, chapterNumber, i + 1),
-  }));
+const dppMap: Record<string, Record<number, Record<number, string>>> = {
+  "physics": {
+    1: {
+      1: "YOUR_FILE_ID_FOR_PHYSICS_CH1_DPP1", 
+      2: "YOUR_FILE_ID_FOR_PHYSICS_CH1_DPP2",
+      // Add more as needed
+    },
+    // Add more chapters as needed
+  },
+  // Add more subjects as needed
 };
+```
 
-// Helper function to return specific videos for each subject and chapter
-function getVideoUrlForSubjectAndChapter(subjectId: string, chapterNumber: number, lectureNumber: number): string {
-  // Define your actual Google Drive embed URLs for each subject, chapter, and lecture
-  const videoUrls: Record<string, Record<number, string[]>> = {
-    "physics": {
-      1: [ // Chapter 1 videos
-        "https://drive.google.com/file/d/YOUR_FILE_ID_1/preview",
-        "https://drive.google.com/file/d/YOUR_FILE_ID_2/preview",
-        // Add more URLs as needed
-      ],
-      2: [ // Chapter 2 videos
-        "https://drive.google.com/file/d/YOUR_FILE_ID_3/preview",
-        "https://drive.google.com/file/d/YOUR_FILE_ID_4/preview",
-        // Add more URLs as needed
-      ],
-      // Add more chapters as needed
-    },
-    "chemistry": {
-      // Similar structure for chemistry chapters
-    },
-    // Add more subjects as needed
-  };
-  
-  // Return the specific URL if available, otherwise return a default URL
-  return videoUrls[subjectId]?.[chapterNumber]?.[lectureNumber - 1] || 
-    "https://drive.google.com/file/d/DEFAULT_FILE_ID/preview";
-}
+And similarly for solutions, update the `getDppSolutionLinksForSubjectChapter` function.
 
-// Similar function for notes URLs
-function getNotesUrlForSubjectAndChapter(subjectId: string, chapterNumber: number, lectureNumber: number): string {
-  // Implementation similar to getVideoUrlForSubjectAndChapter
-  // ...
+## Structure of the Link Maps
+
+The link map structure is:
+```
+{
+  "subjectId": {
+    chapterNumber: {
+      lectureNumber: "fileId"
+    }
+  }
 }
 ```
+
+For example:
+- `videoUrlMap["physics"][1][2]` refers to the video for Physics, Chapter 1, Lecture 2
+- `notesUrlMap["chemistry"][3][1]` refers to the notes for Chemistry, Chapter 3, Lecture 1
+- `dppMap["mathematics"][2][4]` refers to DPP set 4 for Mathematics, Chapter 2
+
+## Adding Support for New Subjects, Chapters, or Lectures
+
+If you need to add support for new subjects, chapters, or lectures:
+
+1. Update the corresponding map in `subjects.ts`
+2. Make sure all the required file IDs are provided
+3. The system will automatically use these IDs to generate the correct links
 
 ## Important Notes About Google Drive Embedding
 
@@ -122,3 +114,4 @@ function getNotesUrlForSubjectAndChapter(subjectId: string, chapterNumber: numbe
    - For downloadable files (PDFs, etc.): Use `/view` at the end of the URL
 3. **File IDs**: Only change the file ID part of the URL, keep the rest of the URL structure the same
 4. **Testing**: After replacing links, test each section thoroughly to ensure all content loads correctly
+5. **Default File ID**: If a specific file ID is not found in the maps, the system will use a default ID. Make sure to replace all default IDs as well.

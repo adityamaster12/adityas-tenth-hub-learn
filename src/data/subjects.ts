@@ -32,34 +32,169 @@ export interface Subject {
   chapters: Chapter[];
 }
 
-// Helper function to create dummy lectures
-const createLectures = (chapterPrefix: string, count: number = 7): Lecture[] => {
-  return Array.from({ length: count }, (_, i) => ({
-    id: `${chapterPrefix}-lecture-${i + 1}`,
-    title: `Lecture ${i + 1}: ${generateLectureTitle(i + 1)}`,
-    description: `This lecture covers important concepts and examples related to ${generateLectureTitle(i + 1)}.`,
-    // Use a placeholder image service for thumbnails
-    thumbnail: `https://picsum.photos/seed/${chapterPrefix}-${i + 1}/400/225`,
-    date: generateRandomDate(),
-    duration: generateRandomDuration(),
-    // IMPORTANT: Replace with actual Google Drive embed URLs
-    // Format: https://drive.google.com/file/d/YOUR_FILE_ID/preview
-    videoUrl: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/preview",
-    // IMPORTANT: Replace with actual Google Drive URLs
-    // Format: https://drive.google.com/file/d/YOUR_FILE_ID/view
-    notesUrl: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/view",
-  }));
+// Create unique video URLs for each lecture
+const getVideoUrlForSubjectChapterLecture = (subjectId: string, chapterNumber: number, lectureNumber: number): string => {
+  // This function would return unique video URLs for each lecture
+  // Replace this with your actual Google Drive file IDs
+  const videoUrlMap: Record<string, Record<number, Record<number, string>>> = {
+    "physics": {
+      1: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 Lecture1
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 Lecture2
+        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
+      },
+      2: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+      },
+      // Add more chapters as needed
+    },
+    "chemistry": {
+      1: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Chemistry Ch1 Lecture1
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
+      },
+      // Add more chapters as needed
+    },
+    // Add more subjects as needed
+  };
+
+  // Try to get the specific video ID, fallback to default if not found
+  const fileId = videoUrlMap[subjectId]?.[chapterNumber]?.[lectureNumber] || "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv";
+  return `https://drive.google.com/file/d/${fileId}/preview`;
 };
 
-// Helper function to create chapters for a subject
-const createChapters = (subjectId: string, count: number = 10): Chapter[] => {
-  return Array.from({ length: count }, (_, i) => ({
-    id: `${subjectId}-chapter-${i + 1}`,
-    number: i + 1,
-    title: generateChapterTitle(subjectId, i + 1),
-    description: `This chapter covers fundamental concepts of ${generateChapterTitle(subjectId, i + 1)}.`,
-    lectures: createLectures(`${subjectId}-chapter-${i + 1}`),
-  }));
+// Create unique notes URLs for each lecture
+const getNotesUrlForSubjectChapterLecture = (subjectId: string, chapterNumber: number, lectureNumber: number): string => {
+  // This function would return unique notes URLs for each lecture
+  // Replace this with your actual Google Drive file IDs
+  const notesUrlMap: Record<string, Record<number, Record<number, string>>> = {
+    "physics": {
+      1: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 Lecture1 Notes
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 Lecture2 Notes
+        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
+      },
+      2: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+      },
+      // Add more chapters as needed
+    },
+    "chemistry": {
+      1: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Chemistry Ch1 Lecture1 Notes
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
+      },
+      // Add more chapters as needed
+    },
+    // Add more subjects as needed
+  };
+
+  // Try to get the specific notes ID, fallback to default if not found
+  const fileId = notesUrlMap[subjectId]?.[chapterNumber]?.[lectureNumber] || "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv";
+  return `https://drive.google.com/file/d/${fileId}/view`;
+};
+
+// Helper function to create lectures with individualized links
+const createLectures = (chapterPrefix: string, count: number = 7): Lecture[] => {
+  // Extract subject and chapter info from prefix
+  const parts = chapterPrefix.split('-');
+  const subjectId = parts[0];
+  const chapterNumber = parseInt(parts[2]);
+
+  return Array.from({ length: count }, (_, i) => {
+    const lectureNumber = i + 1;
+    return {
+      id: `${chapterPrefix}-lecture-${lectureNumber}`,
+      title: `Lecture ${lectureNumber}: ${generateLectureTitle(lectureNumber)}`,
+      description: `This lecture covers important concepts and examples related to ${generateLectureTitle(lectureNumber)}.`,
+      thumbnail: `https://picsum.photos/seed/${chapterPrefix}-${lectureNumber}/400/225`,
+      date: generateRandomDate(),
+      duration: generateRandomDuration(),
+      // Use our helper functions to get unique URLs for each lecture
+      videoUrl: getVideoUrlForSubjectChapterLecture(subjectId, chapterNumber, lectureNumber),
+      notesUrl: getNotesUrlForSubjectChapterLecture(subjectId, chapterNumber, lectureNumber),
+    };
+  });
+};
+
+// Create individualized DPP links
+const getDppLinksForSubjectChapter = (subjectId: string, chapterNumber: number): Record<number, string> => {
+  // Replace with your actual Google Drive file IDs
+  const dppMap: Record<string, Record<number, Record<number, string>>> = {
+    "physics": {
+      1: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 DPP1
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 DPP2
+        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
+        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+      },
+      2: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+      },
+      // Add more chapters as needed
+    },
+    "chemistry": {
+      1: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+      },
+      // Add more chapters as needed
+    },
+    // Add more subjects as needed
+  };
+
+  // Return the map for a specific subject and chapter, or empty object if not found
+  return dppMap[subjectId]?.[chapterNumber] || {};
+};
+
+// Create individualized DPP solution links
+const getDppSolutionLinksForSubjectChapter = (subjectId: string, chapterNumber: number): Record<number, string> => {
+  // Replace with your actual Google Drive file IDs
+  const dppSolutionMap: Record<string, Record<number, Record<number, string>>> = {
+    "physics": {
+      1: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 DPP1 Solution
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 DPP2 Solution
+        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
+        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+      },
+      2: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+      },
+      // Add more chapters as needed
+    },
+    "chemistry": {
+      1: {
+        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
+      },
+      // Add more chapters as needed
+    },
+    // Add more subjects as needed
+  };
+
+  // Return the map for a specific subject and chapter, or empty object if not found
+  return dppSolutionMap[subjectId]?.[chapterNumber] || {};
 };
 
 // Helper function to generate a lecture title
@@ -296,22 +431,46 @@ export function getChapterById(subject: Subject, chapterId: string): Chapter | u
   return subject.chapters.find(chapter => chapter.id === chapterId);
 }
 
-// Helper function for generating DPP links
+// Updated DPP links function to use subject and chapter IDs
 export function getDppLinks(chapterId: string, count: number = 5): { title: string, url: string }[] {
-  return Array.from({ length: count }, (_, i) => ({
-    title: `DPP Set ${i + 1}`,
-    // IMPORTANT: Replace with actual Google Drive URLs 
-    // Format: https://drive.google.com/file/d/YOUR_FILE_ID/view
-    url: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/view"
-  }));
+  // Extract subject ID and chapter number from chapter ID
+  const parts = chapterId.split('-');
+  const subjectId = parts[0];
+  const chapterNumber = parseInt(parts[2]);
+  
+  // Get the specific DPP links for this subject and chapter
+  const dppLinks = getDppLinksForSubjectChapter(subjectId, chapterNumber);
+  
+  return Array.from({ length: count }, (_, i) => {
+    const dppNumber = i + 1;
+    // Use specific DPP link if available, otherwise use default
+    const fileId = dppLinks[dppNumber] || "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv";
+    
+    return {
+      title: `DPP Set ${dppNumber}`,
+      url: `https://drive.google.com/file/d/${fileId}/view`
+    };
+  });
 }
 
-// Helper function for generating DPP solution links
+// Updated DPP solution links function to use subject and chapter IDs
 export function getDppSolutionLinks(chapterId: string, count: number = 5): { title: string, url: string }[] {
-  return Array.from({ length: count }, (_, i) => ({
-    title: `Solutions - DPP Set ${i + 1}`,
-    // IMPORTANT: Replace with actual Google Drive URLs
-    // Format: https://drive.google.com/file/d/YOUR_FILE_ID/view
-    url: "https://drive.google.com/file/d/1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv/view"
-  }));
+  // Extract subject ID and chapter number from chapter ID
+  const parts = chapterId.split('-');
+  const subjectId = parts[0];
+  const chapterNumber = parseInt(parts[2]);
+  
+  // Get the specific DPP solution links for this subject and chapter
+  const dppSolutionLinks = getDppSolutionLinksForSubjectChapter(subjectId, chapterNumber);
+  
+  return Array.from({ length: count }, (_, i) => {
+    const dppNumber = i + 1;
+    // Use specific DPP solution link if available, otherwise use default
+    const fileId = dppSolutionLinks[dppNumber] || "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv";
+    
+    return {
+      title: `Solutions - DPP Set ${dppNumber}`,
+      url: `https://drive.google.com/file/d/${fileId}/view`
+    };
+  });
 }
