@@ -1,3 +1,4 @@
+
 // Sample subjects and chapters data for educational website
 // IMPORTANT: Replace dummy video links with actual Google Drive embed URLs
 // IMPORTANT: Replace dummy notes links with actual Google Drive document links
@@ -344,6 +345,21 @@ function generateChapterTitle(subjectId: string, chapterNumber: number): string 
   }
   
   return `Chapter ${chapterNumber}`;
+}
+
+// Add the missing createChapters function
+function createChapters(subjectId: string, count: number): Chapter[] {
+  return Array.from({ length: count }, (_, i) => {
+    const chapterNumber = i + 1;
+    const chapterId = `${subjectId}-chapter-${chapterNumber}`;
+    return {
+      id: chapterId,
+      number: chapterNumber,
+      title: generateChapterTitle(subjectId, chapterNumber),
+      description: `Complete coverage of all topics in ${generateChapterTitle(subjectId, chapterNumber)} with detailed explanations and examples.`,
+      lectures: createLectures(chapterId, 7) // Each chapter has 7 lectures
+    };
+  });
 }
 
 // Create all subjects with their chapters
