@@ -19,7 +19,7 @@ interface VideoPlayerProps {
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) => {
-  const videoRef = useRef<HTMLIFrameElement>(null);
+  const videoRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -29,7 +29,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isControlsVisible, setIsControlsVisible] = useState(true);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [vimeoPlayer, setVimeoPlayer] = useState<any>(null);
+  const [vimeoPlayer, setVimeoPlayer] = useState<Vimeo.Player | null>(null);
 
   // Load Vimeo Player API
   useEffect(() => {
@@ -68,7 +68,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
           // Set up event listeners
           player.on('play', () => setIsPlaying(true));
           player.on('pause', () => setIsPlaying(false));
-          player.on('timeupdate', (data: any) => setCurrentTime(data.seconds));
+          player.on('timeupdate', (data: Vimeo.PlayerEventData) => setCurrentTime(data.seconds));
           player.on('loadedmetadata', () => {
             player.getDuration().then((duration: number) => {
               setDuration(duration);
@@ -224,7 +224,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
         isFullscreen ? "fixed inset-0 z-50" : "aspect-video"
       )}
     >
-      {/* Video iframe with ref but no src - Vimeo API will initialize it */}
+      {/* Video container with ref but no src - Vimeo API will initialize it */}
       <div className="vimeo-container w-full h-full">
         <div ref={videoRef} className="absolute top-0 left-0 w-full h-full"></div>
       </div>
@@ -322,13 +322,5 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
   );
 };
 
-// Add the Vimeo Player type to the window object
-declare global {
-  interface Window {
-    Vimeo: {
-      Player: new (element: HTMLElement | string, options: any) => any;
-    };
-  }
-}
-
 export default VideoPlayer;
+
