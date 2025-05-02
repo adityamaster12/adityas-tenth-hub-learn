@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Home, Clock, Calendar } from 'lucide-react';
@@ -6,6 +5,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getSubjectById, getChapterById, getDppLinks, getDppSolutionLinks } from '@/data/subjects';
+import VideoPlayer from '@/components/player/VideoPlayer';
 
 const ChapterDetail = () => {
   const { subjectId, chapterId } = useParams<{ subjectId: string, chapterId: string }>();
@@ -127,15 +127,11 @@ const ChapterDetail = () => {
                     <div className="lg:col-span-2">
                       {selectedLecture ? (
                         <>
-                          <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg">
-                            <iframe 
-                              src={selectedLecture.videoUrl} 
-                              title={selectedLecture.title}
-                              className="absolute top-0 left-0 w-full h-full"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                            ></iframe>
-                          </div>
+                          <VideoPlayer 
+                            videoUrl={selectedLecture.videoUrl} 
+                            title={selectedLecture.title} 
+                            poster={selectedLecture.thumbnail} 
+                          />
                           <h2 className="mt-4 text-xl font-semibold">{selectedLecture.title}</h2>
                           <div className="flex items-center mt-2 text-sm text-gray-500">
                             <Calendar className="w-4 h-4 mr-1" />
