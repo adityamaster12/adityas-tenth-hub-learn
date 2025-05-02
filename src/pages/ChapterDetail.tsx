@@ -91,34 +91,20 @@ const ChapterDetail = () => {
 
                 <TabsContent value="lectures" className="pt-6">
                   <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                    {/* Lecture List */}
+                    {/* Simplified Lecture List */}
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">Lecture Videos</h3>
-                      <div className="max-h-[600px] overflow-y-auto pr-2">
-                        {chapter.lectures.map((lecture) => (
-                          <div 
+                      <div className="flex flex-wrap gap-2">
+                        {chapter.lectures.map((lecture, index) => (
+                          <button 
                             key={lecture.id}
-                            className={`lecture-card cursor-pointer mb-4 p-2 rounded ${selectedLecture?.id === lecture.id ? 'border-2 border-education-primary' : 'border border-gray-200'}`}
+                            className={`px-4 py-2 rounded-lg ${selectedLecture?.id === lecture.id 
+                              ? 'bg-education-primary text-white' 
+                              : 'bg-gray-100 hover:bg-gray-200'}`}
                             onClick={() => setSelectedLecture(lecture)}
                           >
-                            <div className="relative">
-                              <img 
-                                src={lecture.thumbnail} 
-                                alt={lecture.title} 
-                                className="object-cover w-full h-32 rounded"
-                              />
-                              <div className="absolute bottom-0 right-0 px-2 py-1 text-xs text-white bg-black bg-opacity-70 rounded-tl">
-                                {lecture.duration}
-                              </div>
-                            </div>
-                            <h4 className="mt-2 font-medium">{lecture.title}</h4>
-                            <div className="flex items-center mt-2 text-sm text-gray-500">
-                              <Calendar className="w-4 h-4 mr-1" />
-                              <span>{lecture.date}</span>
-                              <Clock className="w-4 h-4 ml-3 mr-1" />
-                              <span>{lecture.duration}</span>
-                            </div>
-                          </div>
+                            Lecture {index + 1}
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -129,17 +115,15 @@ const ChapterDetail = () => {
                         <>
                           <VideoPlayer 
                             videoUrl={selectedLecture.videoUrl} 
-                            title={selectedLecture.title} 
+                            title={`Lecture ${chapter.lectures.indexOf(selectedLecture) + 1}`} 
                             poster={selectedLecture.thumbnail} 
                           />
-                          <h2 className="mt-4 text-xl font-semibold">{selectedLecture.title}</h2>
                           <div className="flex items-center mt-2 text-sm text-gray-500">
                             <Calendar className="w-4 h-4 mr-1" />
                             <span>{selectedLecture.date}</span>
                             <Clock className="w-4 h-4 ml-3 mr-1" />
                             <span>{selectedLecture.duration}</span>
                           </div>
-                          <p className="mt-4 text-gray-700">{selectedLecture.description}</p>
                           <div className="mt-6">
                             <a 
                               href={selectedLecture.notesUrl} 
@@ -177,7 +161,7 @@ const ChapterDetail = () => {
                         >
                           <div className="p-2 mr-4 rounded-full bg-education-light">📝</div>
                           <div>
-                            <h4 className="font-medium">Notes: {lecture.title}</h4>
+                            <h4 className="font-medium">Notes: Lecture {index + 1}</h4>
                             <p className="text-sm text-gray-500">PDF Format</p>
                           </div>
                         </a>

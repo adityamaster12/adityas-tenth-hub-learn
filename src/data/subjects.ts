@@ -1,4 +1,3 @@
-
 // Sample subjects and chapters data for educational website
 // Types
 export interface Lecture {
@@ -33,56 +32,40 @@ export interface Subject {
 // Create unique video URLs for each lecture using Vimeo
 const getVideoUrlForSubjectChapterLecture = (subjectId: string, chapterNumber: number, lectureNumber: number): string => {
   // This function returns unique Vimeo video URLs for each lecture
-  // Base Vimeo ID for generating unique IDs
-  const baseVimeoId = 1080959719; // Based on the example Vimeo link provided
+  // Base Vimeo IDs - these are dummy IDs that will be replaced with real ones
+  const vimeoBaseIds = {
+    "physics": 123456700,
+    "chemistry": 234567800,
+    "biology": 345678900,
+    "mathematics": 456789000,
+    "sst": 567890100,
+    "english": 678901200,
+    "hindi-a": 789012300,
+    "hindi-b": 890123400
+  };
   
   // Generate a unique ID based on subject, chapter, and lecture
-  const uniqueOffset = (
-    (subjectId.charCodeAt(0) * 100000) + 
-    (chapterNumber * 10000) + 
-    (lectureNumber * 100)
-  ) % 900000; // Ensure we stay within reasonable range
+  const baseId = vimeoBaseIds[subjectId as keyof typeof vimeoBaseIds] || 1080950000;
+  const uniqueId = baseId + (chapterNumber * 100) + lectureNumber;
   
-  const vimeoId = baseVimeoId + uniqueOffset;
-  
-  return `https://vimeo.com/${vimeoId}`;
+  return `https://vimeo.com/${uniqueId}`;
 };
 
 // Create unique notes URLs for each lecture
 const getNotesUrlForSubjectChapterLecture = (subjectId: string, chapterNumber: number, lectureNumber: number): string => {
-  // This function would return unique notes URLs for each lecture
-  // Replace this with your actual Google Drive file IDs
-  const notesUrlMap: Record<string, Record<number, Record<number, string>>> = {
-    "physics": {
-      1: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 Lecture1 Notes
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 Lecture2 Notes
-        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
-      },
-      2: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-      },
-      // Add more chapters as needed
-    },
-    "chemistry": {
-      1: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Chemistry Ch1 Lecture1 Notes
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
-      },
-      // Add more chapters as needed
-    },
-    // Add more subjects as needed
-  };
-
-  // Try to get the specific notes ID, fallback to default if not found
-  const fileId = notesUrlMap[subjectId]?.[chapterNumber]?.[lectureNumber] || "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv";
+  // Generate random Google Drive file ID (dummy)
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let fileId = '';
+  for (let i = 0; i < 33; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    fileId += characters.charAt(randomIndex);
+  }
+  
   return `https://drive.google.com/file/d/${fileId}/view`;
 };
 
 // Helper function to create lectures with individualized links
-const createLectures = (chapterPrefix: string, count: number = 7): Lecture[] => {
+const createLectures = (chapterPrefix: string, count: number = 8): Lecture[] => {
   // Extract subject and chapter info from prefix
   const parts = chapterPrefix.split('-');
   const subjectId = parts[0];
@@ -92,8 +75,8 @@ const createLectures = (chapterPrefix: string, count: number = 7): Lecture[] => 
     const lectureNumber = i + 1;
     return {
       id: `${chapterPrefix}-lecture-${lectureNumber}`,
-      title: `Lecture ${lectureNumber}: ${generateLectureTitle(lectureNumber)}`,
-      description: `This lecture covers important concepts and examples related to ${generateLectureTitle(lectureNumber)}.`,
+      title: `Lecture ${lectureNumber}`,
+      description: `This lecture covers important concepts and examples related to Chapter ${chapterNumber}, Lecture ${lectureNumber}.`,
       thumbnail: `https://picsum.photos/seed/${chapterPrefix}-${lectureNumber}/400/225`,
       date: generateRandomDate(),
       duration: generateRandomDuration(),
@@ -339,7 +322,7 @@ function createChapters(subjectId: string, count: number): Chapter[] {
       number: chapterNumber,
       title: generateChapterTitle(subjectId, chapterNumber),
       description: `Complete coverage of all topics in ${generateChapterTitle(subjectId, chapterNumber)} with detailed explanations and examples.`,
-      lectures: createLectures(chapterId, 8) // Each chapter has 8 lectures now
+      lectures: createLectures(chapterId, 8) // Each chapter has 8 lectures
     };
   });
 }
