@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Home, Clock, Calendar } from 'lucide-react';
@@ -9,6 +8,7 @@ import { getSubjectById, getChapterById } from '@/data/subjects';
 import { getDppLinks } from '@/data/dppLinks';
 import { getDppSolutionLinks } from '@/data/dppSolutionLinks';
 import VideoPlayer from '@/components/player/VideoPlayer';
+import { toast } from "@/components/ui/use-toast";
 
 const ChapterDetail = () => {
   const { subjectId, chapterId } = useParams<{ subjectId: string, chapterId: string }>();
@@ -20,12 +20,26 @@ const ChapterDetail = () => {
     chapter && chapter.lectures.length > 0 ? chapter.lectures[0] : null
   );
   
+  const [activeTab, setActiveTab] = useState('lectures');
+  
   // Reset selected lecture when changing chapters or subjects
   useEffect(() => {
     if (chapter && chapter.lectures.length > 0) {
       setSelectedLecture(chapter.lectures[0]);
     }
   }, [chapterId, subjectId, chapter]);
+
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+
+  // Handle lecture selection
+  const handleLectureSelect = (lecture: any) => {
+    if (lecture.id !== selectedLecture?.id) {
+      setSelectedLecture(lecture);
+    }
+  };
 
   if (!subject || !chapter) {
     return (
@@ -46,6 +60,23 @@ const ChapterDetail = () => {
 
   const dppLinks = getDppLinks(chapter.id);
   const dppSolutionLinks = getDppSolutionLinks(chapter.id);
+
+  const handleVideoEnd = () => {
+    // Find the next lecture index
+    if (chapter.lectures.length > 0 && selectedLecture) {
+      const currentIndex = chapter.lectures.findIndex(lecture => lecture.id === selectedLecture.id);
+      const nextIndex = currentIndex + 1;
+      
+      // If there's a next lecture, play it
+      if (nextIndex < chapter.lectures.length) {
+        setSelectedLecture(chapter.lectures[nextIndex]);
+        toast({
+          title: "Next Lecture",
+          description: `Playing lecture ${nextIndex + 1}`,
+        });
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -88,7 +119,7 @@ const ChapterDetail = () => {
         <section className="py-6 bg-white">
           <div className="container px-4 mx-auto sm:px-6">
             <div className="max-w-4xl mx-auto">
-              <Tabs defaultValue="lectures">
+              <Tabs defaultValue="lectures" value={activeTab} onValueChange={handleTabChange}>
                 <div className="border-b">
                   <TabsList className="h-10">
                     <TabsTrigger value="lectures" className="px-4">LECTURES</TabsTrigger>
@@ -101,7 +132,7 @@ const ChapterDetail = () => {
 
                 <TabsContent value="lectures" className="pt-6">
                   <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                    {/* Simplified Lecture List */}
+                    {/* Lecture List */}
                     <div className="space-y-4">
                       <h3 className="text-lg font-semibold">Lecture Videos</h3>
                       <div className="flex flex-wrap gap-2">
@@ -111,7 +142,7 @@ const ChapterDetail = () => {
                             className={`px-4 py-2 rounded-lg ${selectedLecture?.id === lecture.id 
                               ? 'bg-education-primary text-white' 
                               : 'bg-gray-100 hover:bg-gray-200'}`}
-                            onClick={() => setSelectedLecture(lecture)}
+                            onClick={() => handleLectureSelect(lecture)}
                           >
                             Lecture {index + 1}
                           </button>
@@ -125,8 +156,9 @@ const ChapterDetail = () => {
                         <>
                           <VideoPlayer 
                             videoUrl={selectedLecture.videoUrl} 
-                            title={`Lecture ${chapter.lectures.indexOf(selectedLecture) + 1}`} 
-                            poster={selectedLecture.thumbnail} 
+                            title={`Lecture ${chapter.lectures.indexOf(selectedLecture) + 1}: ${selectedLecture.title || ''}`} 
+                            poster={selectedLecture.thumbnail}
+                            onVideoEnd={handleVideoEnd}
                           />
                           <div className="flex items-center mt-2 text-sm text-gray-500">
                             <Calendar className="w-4 h-4 mr-1" />
@@ -134,16 +166,18 @@ const ChapterDetail = () => {
                             <Clock className="w-4 h-4 ml-3 mr-1" />
                             <span>{selectedLecture.duration}</span>
                           </div>
-                          <div className="mt-6">
-                            <a 
-                              href={selectedLecture.notesUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white rounded bg-education-primary hover:bg-education-primary/90"
-                            >
-                              Download Lecture Notes
-                            </a>
-                          </div>
+                          {selectedLecture.notesUrl && (
+                            <div className="mt-6">
+                              <a 
+                                href={selectedLecture.notesUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-4 py-2 text-sm font-medium text-white rounded bg-education-primary hover:bg-education-primary/90"
+                              >
+                                Download Lecture Notes
+                              </a>
+                            </div>
+                          )}
                         </>
                       ) : (
                         <div className="flex items-center justify-center h-64 border rounded-lg">
