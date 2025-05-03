@@ -1,5 +1,11 @@
+
 // Sample subjects and chapters data for educational website
 // Types
+import { getLectureUrl } from './lectureLinks';
+import { getNotesUrl } from './notesLinks';
+import { getDppLinks } from './dppLinks';
+import { getDppSolutionLinks } from './dppSolutionLinks';
+
 export interface Lecture {
   id: string;
   title: string;
@@ -27,158 +33,6 @@ export interface Subject {
   colorLight: string;
   icon: string;
   chapters: Chapter[];
-}
-
-// Create unique video URLs for each lecture using Vimeo
-const getVideoUrlForSubjectChapterLecture = (subjectId: string, chapterNumber: number, lectureNumber: number): string => {
-  // This function returns unique Vimeo video URLs for each lecture
-  // Base Vimeo IDs - these are dummy IDs that will be replaced with real ones
-  const vimeoBaseIds = {
-    "physics": 123456700,
-    "chemistry": 234567800,
-    "biology": 345678900,
-    "mathematics": 456789000,
-    "sst": 567890100,
-    "english": 678901200,
-    "hindi-a": 789012300,
-    "hindi-b": 890123400
-  };
-  
-  // Generate a unique ID based on subject, chapter, and lecture
-  const baseId = vimeoBaseIds[subjectId as keyof typeof vimeoBaseIds] || 1080950000;
-  const uniqueId = baseId + (chapterNumber * 100) + lectureNumber;
-  
-  return `https://vimeo.com/${uniqueId}`;
-};
-
-// Create unique notes URLs for each lecture
-const getNotesUrlForSubjectChapterLecture = (subjectId: string, chapterNumber: number, lectureNumber: number): string => {
-  // Generate random Google Drive file ID (dummy)
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let fileId = '';
-  for (let i = 0; i < 33; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    fileId += characters.charAt(randomIndex);
-  }
-  
-  return `https://drive.google.com/file/d/${fileId}/view`;
-};
-
-// Helper function to create lectures with individualized links
-const createLectures = (chapterPrefix: string, count: number = 8): Lecture[] => {
-  // Extract subject and chapter info from prefix
-  const parts = chapterPrefix.split('-');
-  const subjectId = parts[0];
-  const chapterNumber = parseInt(parts[2]);
-
-  return Array.from({ length: count }, (_, i) => {
-    const lectureNumber = i + 1;
-    return {
-      id: `${chapterPrefix}-lecture-${lectureNumber}`,
-      title: `Lecture ${lectureNumber}`,
-      description: `This lecture covers important concepts and examples related to Chapter ${chapterNumber}, Lecture ${lectureNumber}.`,
-      thumbnail: `https://picsum.photos/seed/${chapterPrefix}-${lectureNumber}/400/225`,
-      date: generateRandomDate(),
-      duration: generateRandomDuration(),
-      // Use our helper functions to get unique URLs for each lecture
-      videoUrl: getVideoUrlForSubjectChapterLecture(subjectId, chapterNumber, lectureNumber),
-      notesUrl: getNotesUrlForSubjectChapterLecture(subjectId, chapterNumber, lectureNumber),
-    };
-  });
-};
-
-// Create individualized DPP links
-const getDppLinksForSubjectChapter = (subjectId: string, chapterNumber: number): Record<number, string> => {
-  // Replace with your actual Google Drive file IDs
-  const dppMap: Record<string, Record<number, Record<number, string>>> = {
-    "physics": {
-      1: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 DPP1
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 DPP2
-        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
-        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-      },
-      2: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-      },
-      // Add more chapters as needed
-    },
-    "chemistry": {
-      1: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-      },
-      // Add more chapters as needed
-    },
-    // Add more subjects as needed
-  };
-
-  // Return the map for a specific subject and chapter, or empty object if not found
-  return dppMap[subjectId]?.[chapterNumber] || {};
-};
-
-// Create individualized DPP solution links
-const getDppSolutionLinksForSubjectChapter = (subjectId: string, chapterNumber: number): Record<number, string> => {
-  // Replace with your actual Google Drive file IDs
-  const dppSolutionMap: Record<string, Record<number, Record<number, string>>> = {
-    "physics": {
-      1: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 DPP1 Solution
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // Physics Ch1 DPP2 Solution
-        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv", // etc...
-        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-      },
-      2: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-      },
-      // Add more chapters as needed
-    },
-    "chemistry": {
-      1: {
-        1: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        2: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        3: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        4: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-        5: "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv",
-      },
-      // Add more chapters as needed
-    },
-    // Add more subjects as needed
-  };
-
-  // Return the map for a specific subject and chapter, or empty object if not found
-  return dppSolutionMap[subjectId]?.[chapterNumber] || {};
-};
-
-// Helper function to generate a lecture title
-function generateLectureTitle(lectureNumber: number): string {
-  const titles = [
-    "Introduction to Key Concepts",
-    "Basic Principles and Fundamentals",
-    "Problem-Solving Techniques",
-    "Advanced Applications",
-    "Practical Examples",
-    "Important Formulas and Equations",
-    "Numerical Problems",
-    "Theory and Practice",
-    "Common Misconceptions",
-    "Exam Preparation Strategies"
-  ];
-  
-  return titles[lectureNumber % titles.length];
 }
 
 // Helper function to generate a random date in the last 3 months
@@ -312,6 +166,25 @@ function generateChapterTitle(subjectId: string, chapterNumber: number): string 
   return `Chapter ${chapterNumber}`;
 }
 
+// Helper function to create lectures with individualized links
+const createLectures = (chapterPrefix: string, count: number = 8): Lecture[] => {
+  return Array.from({ length: count }, (_, i) => {
+    const lectureNumber = i + 1;
+    const lectureId = `${chapterPrefix}-lecture-${lectureNumber}`;
+    
+    return {
+      id: lectureId,
+      title: `Lecture ${lectureNumber}`,
+      description: `This lecture covers important concepts related to this chapter.`,
+      thumbnail: `https://picsum.photos/seed/${lectureId}/400/225`,
+      date: generateRandomDate(),
+      duration: generateRandomDuration(),
+      videoUrl: getLectureUrl(lectureId),
+      notesUrl: getNotesUrl(lectureId),
+    };
+  });
+};
+
 // Add the createChapters function
 function createChapters(subjectId: string, count: number): Chapter[] {
   return Array.from({ length: count }, (_, i) => {
@@ -410,48 +283,4 @@ export function getSubjectById(subjectId: string): Subject | undefined {
 
 export function getChapterById(subject: Subject, chapterId: string): Chapter | undefined {
   return subject.chapters.find(chapter => chapter.id === chapterId);
-}
-
-// Updated DPP links function to use subject and chapter IDs
-export function getDppLinks(chapterId: string, count: number = 5): { title: string, url: string }[] {
-  // Extract subject ID and chapter number from chapter ID
-  const parts = chapterId.split('-');
-  const subjectId = parts[0];
-  const chapterNumber = parseInt(parts[2]);
-  
-  // Get the specific DPP links for this subject and chapter
-  const dppLinks = getDppLinksForSubjectChapter(subjectId, chapterNumber);
-  
-  return Array.from({ length: count }, (_, i) => {
-    const dppNumber = i + 1;
-    // Use specific DPP link if available, otherwise use default
-    const fileId = dppLinks[dppNumber] || "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv";
-    
-    return {
-      title: `DPP Set ${dppNumber}`,
-      url: `https://drive.google.com/file/d/${fileId}/view`
-    };
-  });
-}
-
-// Updated DPP solution links function to use subject and chapter IDs
-export function getDppSolutionLinks(chapterId: string, count: number = 5): { title: string, url: string }[] {
-  // Extract subject ID and chapter number from chapter ID
-  const parts = chapterId.split('-');
-  const subjectId = parts[0];
-  const chapterNumber = parseInt(parts[2]);
-  
-  // Get the specific DPP solution links for this subject and chapter
-  const dppSolutionLinks = getDppSolutionLinksForSubjectChapter(subjectId, chapterNumber);
-  
-  return Array.from({ length: count }, (_, i) => {
-    const dppNumber = i + 1;
-    // Use specific DPP solution link if available, otherwise use default
-    const fileId = dppSolutionLinks[dppNumber] || "1yCQFG1t3tNeYoGhDMHJWnCqR0XYR1Ekv";
-    
-    return {
-      title: `Solutions - DPP Set ${dppNumber}`,
-      url: `https://drive.google.com/file/d/${fileId}/view`
-    };
-  });
 }

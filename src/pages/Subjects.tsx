@@ -4,73 +4,7 @@ import { Link } from 'react-router-dom';
 import { Home } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-
-const subjects = [
-  {
-    id: "physics",
-    name: "Physics",
-    color: "bg-education-physics",
-    description: "Study of matter, energy, and the interaction between them",
-    chapters: 10,
-    icon: "⚛️"
-  },
-  {
-    id: "chemistry",
-    name: "Chemistry",
-    color: "bg-education-chemistry",
-    description: "Study of composition, structure, properties, and change of matter",
-    chapters: 10,
-    icon: "🧪"
-  },
-  {
-    id: "biology",
-    name: "Biology",
-    color: "bg-education-biology",
-    description: "Study of living organisms and their interactions",
-    chapters: 10,
-    icon: "🧬"
-  },
-  {
-    id: "mathematics",
-    name: "Mathematics",
-    color: "bg-education-mathematics",
-    description: "Study of numbers, quantity, structure, space, and change",
-    chapters: 10,
-    icon: "➗"
-  },
-  {
-    id: "sst",
-    name: "Social Studies",
-    color: "bg-education-sst",
-    description: "Study of society, relationships among individuals, and history",
-    chapters: 10,
-    icon: "🌍"
-  },
-  {
-    id: "english",
-    name: "English",
-    color: "bg-education-english",
-    description: "Study of language, literature, and composition",
-    chapters: 10,
-    icon: "📚"
-  },
-  {
-    id: "hindi-a",
-    name: "Hindi Course A",
-    color: "bg-education-hindi",
-    description: "Study of Hindi language, literature, and composition (Course A)",
-    chapters: 10,
-    icon: "🗣️"
-  },
-  {
-    id: "hindi-b",
-    name: "Hindi Course B",
-    color: "bg-education-hindi",
-    description: "Study of Hindi language, literature, and composition (Course B)",
-    chapters: 10,
-    icon: "📝"
-  },
-];
+import { subjects } from '@/data/subjects';
 
 const Subjects = () => {
   return (
@@ -123,7 +57,7 @@ const Subjects = () => {
                     <p className="mb-4 text-sm text-gray-600">{subject.description}</p>
                     <div className="mt-auto text-sm font-medium">
                       <span className="text-education-primary group-hover:underline">
-                        {subject.chapters} Chapters
+                        {subject.chapters.length} Chapters
                       </span>
                     </div>
                   </div>
