@@ -1,4 +1,3 @@
-
 /**
  * LECTURE LINKS
  * 
@@ -96,7 +95,11 @@ export const lectureLinks: Record<string, string> = {
   // MATHEMATICS LECTURES
   // Chapter 1
   "mathematics-chapter-1-lecture-1": "https://vimeo.com/456789001",
-  "mathematics-chapter-1-lecture-2": "https://vimeo.com/456789002",
+  "mathematics-chapter-1-lecture-2": "https://vimeo.com/1080959719",
+  "mathematics-chapter-1-lecture-3": "https://vimeo.com/1080992074",
+  "mathematics-chapter-1-lecture-4": "https://vimeo.com/1081006528",
+  "mathematics-chapter-1-lecture-5": "https://vimeo.com/1081043878",
+  "mathematics-chapter-1-lecture-6": "https://vimeo.com/1081043878",
   // Continue for all mathematics chapters...
   
   // SOCIAL STUDIES LECTURES
