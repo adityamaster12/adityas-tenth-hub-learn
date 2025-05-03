@@ -1,10 +1,13 @@
+
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Home, Clock, Calendar } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getSubjectById, getChapterById, getDppLinks, getDppSolutionLinks } from '@/data/subjects';
+import { getSubjectById, getChapterById } from '@/data/subjects';
+import { getDppLinks } from '@/data/dppLinks';
+import { getDppSolutionLinks } from '@/data/dppSolutionLinks';
 import VideoPlayer from '@/components/player/VideoPlayer';
 
 const ChapterDetail = () => {
