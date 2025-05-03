@@ -50,6 +50,10 @@ declare namespace Vimeo {
     
     on(event: string, callback: (data: any) => void): void;
     off(event: string, callback?: (data: any) => void): void;
+
+    // Add the missing setPlaybackRate method
+    setPlaybackRate(rate: number): Promise<number>;
+    getPlaybackRate(): Promise<number>;
   }
 }
 
