@@ -7,10 +7,18 @@ import {
   VolumeX, 
   Maximize,
   SkipBack,
-  SkipForward
+  SkipForward,
+  Settings,
+  RotateCw
 } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface VideoPlayerProps {
   videoUrl: string;
@@ -28,8 +36,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isControlsVisible, setIsControlsVisible] = useState(true);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [videoQuality, setVideoQuality] = useState("auto");
+  const [isRotated, setIsRotated] = useState(false);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [vimeoPlayer, setVimeoPlayer] = useState<Vimeo.Player | null>(null);
+
+  // Define available qualities and playback speeds
+  const availableQualities = ["auto", "4K", "1080p", "720p", "540p", "360p"];
+  const availableSpeeds = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
   // Load Vimeo Player API
   useEffect(() => {
@@ -62,7 +77,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
             title: false,
             byline: false,
             portrait: false,
-            controls: false // We'll use our custom controls
+            controls: false, // We'll use our custom controls
+            speed: true
           });
 
           // Set up event listeners
@@ -216,12 +232,34 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
     };
   }, []);
 
+  // Set the playback speed
+  const changePlaybackSpeed = (speed: number) => {
+    if (vimeoPlayer) {
+      vimeoPlayer.setPlaybackRate(speed);
+      setPlaybackSpeed(speed);
+    }
+  };
+
+  // Set video quality
+  const changeVideoQuality = (quality: string) => {
+    // Note: Vimeo API doesn't directly allow setting quality via the JS API,
+    // but we're preparing the UI for this feature
+    setVideoQuality(quality);
+    console.log(`Quality set to ${quality}`);
+  };
+
+  // Toggle screen rotation
+  const toggleRotation = () => {
+    setIsRotated(!isRotated);
+  };
+
   return (
     <div 
       ref={containerRef} 
       className={cn(
         "relative group w-full rounded-lg overflow-hidden bg-black",
-        isFullscreen ? "fixed inset-0 z-50" : "aspect-video"
+        isFullscreen ? "fixed inset-0 z-50" : "aspect-video",
+        isRotated ? "transform rotate-90 md:rotate-0 md:aspect-[9/16] md:mx-auto" : ""
       )}
     >
       {/* Video container with ref but no src - Vimeo API will initialize it */}
@@ -286,6 +324,60 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
           </div>
           
           <div className="flex items-center space-x-3">
+            {/* Rotate screen button */}
+            <button 
+              onClick={toggleRotation}
+              className="rounded-full bg-white/20 p-2 hover:bg-white/30 transition"
+            >
+              <RotateCw className="h-4 w-4 text-white" />
+            </button>
+            
+            {/* Playback speed selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="rounded-full bg-white/20 p-2 hover:bg-white/30 transition">
+                  <span className="text-xs font-medium text-white">{playbackSpeed}x</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-28">
+                {availableSpeeds.map((speed) => (
+                  <DropdownMenuItem 
+                    key={speed}
+                    onClick={() => changePlaybackSpeed(speed)}
+                    className={cn(
+                      "justify-center",
+                      playbackSpeed === speed && "bg-accent font-medium"
+                    )}
+                  >
+                    {speed}x
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            {/* Quality selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="rounded-full bg-white/20 p-2 hover:bg-white/30 transition">
+                  <Settings className="h-4 w-4 text-white" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-28">
+                {availableQualities.map((quality) => (
+                  <DropdownMenuItem 
+                    key={quality}
+                    onClick={() => changeVideoQuality(quality)}
+                    className={cn(
+                      "justify-center",
+                      videoQuality === quality && "bg-accent font-medium"
+                    )}
+                  >
+                    {quality}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             {/* Volume control */}
             <div className="hidden sm:flex items-center space-x-2">
               <button 
@@ -323,4 +415,3 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, title, poster }) =>
 };
 
 export default VideoPlayer;
-

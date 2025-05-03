@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Home, Clock, Calendar } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
@@ -19,6 +19,13 @@ const ChapterDetail = () => {
   const [selectedLecture, setSelectedLecture] = useState<any>(
     chapter && chapter.lectures.length > 0 ? chapter.lectures[0] : null
   );
+  
+  // Reset selected lecture when changing chapters or subjects
+  useEffect(() => {
+    if (chapter && chapter.lectures.length > 0) {
+      setSelectedLecture(chapter.lectures[0]);
+    }
+  }, [chapterId, subjectId, chapter]);
 
   if (!subject || !chapter) {
     return (
